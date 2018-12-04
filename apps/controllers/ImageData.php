@@ -13,10 +13,10 @@ function getMimeType($raw_data){
 
 
 function checkMimeType($mime){
-    /*
-    画像データのMIMEタイプのチェックを行う
-    画像用のMIMEではない場合はエラーを出す
-    */
+/*
+画像データのMIMEタイプのチェックを行う
+画像用のMIMEではない場合はエラーを出す
+*/
 
     switch($mime){
         case 'image/gif':
@@ -38,9 +38,9 @@ function checkMimeType($mime){
 
 
 class ImageDataBase64 {
-    /*
-    Base64でエンコードされた画像データの情報に関するクラス
-    */
+/*
+Base64でエンコードされた画像データの情報に関するクラス
+*/
 
     private $_scheme ='data:application/octet-stream;base64,';
     private $_row_data;  // Base64でエンコードされた画像データ
