@@ -9,7 +9,7 @@ use Phalcon\Http\Response;
 require_once __DIR__."/ImageData.php";
 
 
-// Loader() を使ってモデルをオートロードします。
+// Loader() を使ってモデルをオートロード
 $loader = new Loader();
 
 $loader->registerNamespaces(
@@ -152,7 +152,6 @@ $app->post(
                     'messages' => $e->getMessage(),
                 ]
             );
-            // return "okok";
             return $response;
         }
 
