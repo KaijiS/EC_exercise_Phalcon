@@ -7,7 +7,7 @@
 $base_url = 'http://localhost/EC_exercise';
 
 # 画像の処理
-$raw_data = file_get_contents("./../sample_img/demo.png");
+$raw_data = file_get_contents("sample.png");
 $raw_data = base64_encode($raw_data); // 画像バイナリをBase64形式に変換
 
 // 商品の追加または商品情報の変更時のための情報
@@ -19,7 +19,7 @@ $insert_data = array(
 );
 
 // 使用する操作以外をコマンとアウト
-// $response = Show($base_url,3);               // 指定したIDの商品データを取得する
+$response = Show($base_url,1);               // 指定したIDの商品データを取得する
 // $response = Search($base_url,'P');           // 商品を検索する
 // $response= Insert($base_url,$insert_data);   // 商品を追加する
 // $response = Edit($base_url,$insert_data,1); // 商品情報を編集する

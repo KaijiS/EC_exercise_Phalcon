@@ -6,7 +6,7 @@ use Phalcon\Di\FactoryDefault;
 use Phalcon\Db\Adapter\Pdo\Mysql as PdoMysql;
 use Phalcon\Http\Response;
 
-require_once __DIR__."/ImageData.php";
+require_once __DIR__."/ImageDataInfo/ImageData.php";
 
 
 // Loader() を使ってモデルをオートロード
@@ -14,7 +14,7 @@ $loader = new Loader();
 
 $loader->registerNamespaces(
     [
-        'EC\Products' => __DIR__ . '/../models/',
+        'EC\Products' => __DIR__ . '/models/',
     ]
 );
 
