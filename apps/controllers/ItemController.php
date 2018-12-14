@@ -14,7 +14,7 @@ $loader = new Loader();
 
 $loader->registerNamespaces(
     [
-        'EC\Products' => __DIR__ . '/models/',
+        'EC\Products' => __DIR__ . '../models/',
     ]
 );
 
