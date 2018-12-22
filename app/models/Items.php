@@ -20,6 +20,10 @@ class Items extends Model
     /* ------ ここからセッターメソッド -----*/
     public function setName($name)
     {
+        // 名前の長さをチェック
+        if (strlen($name) < 10) {
+            throw new \InvalidArgumentException('名前が短すぎます');
+        }
         $this->_name = $name;
         return $this;
     }
@@ -74,6 +78,17 @@ class Items extends Model
         return $this->_raw_data;
     }
 
+
+
+    public function getSource()
+    {
+        return "items";
+    }
+
+    public function initialize()
+    {
+        $this->setSource("items");
+    }
 
 
     public function validation()

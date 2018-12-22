@@ -1,7 +1,9 @@
 <?php
 
+use Phalcon\Mvc\Micro\Collection;
+
 // ルーティングの定義
-$itemsCollection = new \Phalcon\Mvc\Micro\Collection();
+$itemsCollection = new Collection();
 $itemsCollection->setHandler('\App\Controllers\ItemController', true);
 $itemsCollection->setPrefix("/api/items");
 $itemsCollection->get('/', 'index');

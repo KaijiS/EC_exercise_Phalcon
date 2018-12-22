@@ -6,57 +6,121 @@ class IndexController extends Controller
 {
     public function indexAction()
     {
-        // $this->request->get('user_id');
-        // echo '<h1>Hello!</h1>';
-        $this->view->disable();
-        $this->response->setContentType('application/json'); 
-        $this->response->setJsonContent(
-            [
-                'status' => 'OK'
-            ]
-        );
-        return $this->response;
-        // echo json_encode([
-        //     'status' => 'OK'
-        // ]); 
-        
-        // try {
-        //     print_r("kkk");
-        // } catch (ServiceException $e) {
-        //     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-        // }
+        // $items = Items::find();
 
         return "sss";
     }
 
     public function show($id)
     {   
-        $this->response->setJsonContent(
-            [
-                'status' => 'OK'
-            ]
-        );
-        return $this->response;
-        echo 'wwwww';
+        $item = Items::findFirst(3);
+        
+        // レスポンスを作成
+        $response = new Response();
+
+        if ($item === false) {
+            $response->setJsonContent(
+                [
+                    'status' => 'NOT-FOUND'
+                ]
+            );
+        } else {
+            $response->setJsonContent(
+                [
+                    'status' => 'FOUND',
+                    'data'   => [
+                        'id'            => $item->id,
+                        'name'          => $item->name,
+                        'description'   => $item->description,
+                        'price'         => $item->price,
+                        'mime'          => $item->mime,
+                        'raw_data'      => base64_encode($item->raw_data)
+                    ]
+                ]
+            );
+        }
+        return $response;
     }
 
     public function add()
     {
-        echo '<h1>He</h1>';
+        $item = new Items();
+        $item->_name = $item->name;
+        $item->_description = "Astro Boy";
+        $item->_price = 1952;
+        $item->mime = $img_info->getMime();
+        $item->raw_data = base64_decode($item->img);
+
+        if ($robot->save() === false) {
+            echo "Umh, We can't store robots right now: \n";
+
+            $messages = $item->getMessages();
+
+            foreach ($messages as $message) {
+                echo $message, "\n";
+            }
+        } else {
+            echo "Great, a new robot was saved successfully!";
+        }
     }
 
     public function edit($id)
     {
-        echo '<h1>lo!</h1>';
+        $item = Items::findFirst($id);
+        $item->_name = $item->name;
+        $item->_description = "Astro Boy";
+        $item->_price = 1952;
+        $item->mime = $img_info->getMime();
+        $item->raw_data = base64_decode($item->img);
+
+        if ($robot->save() === false) {
+            echo "Umh, We can't store robots right now: \n";
+
+            $messages = $item->getMessages();
+
+            foreach ($messages as $message) {
+                echo $message, "\n";
+            }
+        } else {
+            echo "Great, a new robot was saved successfully!";
+        }
     }
 
     public function delete($id)
     {
+        $item = Items::findFirst($id);
+
+        if ($item !== false) {
+            if ($item->delete() === false) {
+                echo "Sorry, we can't delete the robot right now: \n";
+
+                $messages = $item->getMessages();
+
+                foreach ($messages as $message) {
+                    echo $message, "\n";
+                }
+            } else {
+                echo "The robot was deleted successfully!";
+            }
+        }
         echo '<h1>H</h1>';
     }
 
     public function search()
     {
+        $items = Items::find("name = '%' . $name . '%'");
+
+        $data = [];
+
+        foreach ($items as $item) {
+            $data[] = [
+                'id'    => $item->id,
+                'name'  => $item->name,
+                'price' => $item->price,
+            ];
+        }
+
+        echo json_encode($data);
         echo '<h1>Helo!</h1>';
     }
 }
