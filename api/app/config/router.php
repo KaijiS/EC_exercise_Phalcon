@@ -12,4 +12,6 @@ $router = $di->getRouter();
 //     ]
 // );
 
+$router->add('/items/{id}', 'items::show');
+
 $router->handle();
