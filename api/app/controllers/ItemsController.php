@@ -41,7 +41,23 @@ class ItemsController extends \Phalcon\Mvc\Controller
     {
         $this->view->disable(); 
 
-        $items = Items::find("name LIKE '%" . $name . "%'");
+        try{
+            $items = Items::find("name LIKE '%" . $name . "%'");
+        }catch (Exception $e) {
+            return json_encode(["aka"=>"aaa"]);
+        }
+        
+
+        // if (empty($items)){
+        //     return json_encoder(['kara'=>gettype($items)]);
+        // }
+        // return json_encoder([
+        //         'kara'=>gettype($items)
+        //     ]);
+        return gettype($items);
+        // return json_encoder([
+        //     'kara'=>$items
+        // ]);
 
         $data = [];
 
