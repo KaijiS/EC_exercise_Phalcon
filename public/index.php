@@ -1,58 +1,37 @@
 <?php
 
 use Phalcon\Loader;
-use Phalcon\Mvc\View;
-use Phalcon\Mvc\Application;
+use Phalcon\Mvc\Micro;
 use Phalcon\Di\FactoryDefault;
-use Phalcon\Mvc\Url as UrlProvider;
-use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
+use Phalcon\Db\Adapter\Pdo\Mysql as PdoMysql;
+use Phalcon\Http\Response;
 
-// リソースの特定に役立つ絶対パス定数を定義する
+require_once __DIR__."/../ImageDataInfo/ImageData.php";
+
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
 
-// オートローダーの登録
+
+// Loader() を使ってモデルをオートロード
 $loader = new Loader();
 
-$loader->registerDirs(
+$loader->registerNamespaces(
     [
-        APP_PATH . '/controllers/',
-        APP_PATH . '/models/',
+        // 'EC\Products' => __DIR__ . '/../models/',
+        'App\Controllers' => APP_PATH . '/controllers/',
+        'App\Models'      => APP_PATH . '/models/',
     ]
 );
 
 $loader->register();
 
-// DIの生成
 $di = new FactoryDefault();
 
-// ビューコンポーネントの設定
-$di->set(
-    'view',
-    function () {
-        $view = new View();
-        $view->setViewsDir(APP_PATH . '/views/');
-        return $view;
-    }
-);
-
-// ベースURIの設定
-$di->set(
-    'url',
-    function () {
-        $url = new UrlProvider();
-        $url->setBaseUri('/');
-        return $url;
-    }
-);
-
-
-
-// データベースの設定
+// データベースサービスのセットアップ
 $di->set(
     'db',
     function () {
-        return new DbAdapter(
+        return new PdoMysql(
             [
                 'host'     => 'localhost',
                 'username' => 'root',
@@ -63,13 +42,12 @@ $di->set(
     }
 );
 
-$application = new Application($di);
+// DI を作成し、アプリケーションにバインド
+$app = new Micro($di);
 
-try {
-    // リクエストのハンドリング
-    $response = $application->handle();
+/**
+ * Handle routes
+ */
+include APP_PATH . '/config/router.php';
 
-    $response->send();
-} catch (\Exception $e) {
-    echo 'Exception: ', $e->getMessage();
-}
+$app->handle();

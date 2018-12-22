@@ -10,12 +10,12 @@ use Phalcon\Validation\Validator\InclusionIn;
 
 class Items extends Model
 {
-    private $_id;
-    private $_name;
-    private $_description;
-    private $_price;
-    private $_mime;
-    private $_raw_data;
+    protected $_id;
+    protected $_name;
+    protected $_description;
+    protected $_price;
+    protected $_mime;
+    protected $_raw_data;
 
     /* ------ ここからセッターメソッド -----*/
     public function setName($name)
