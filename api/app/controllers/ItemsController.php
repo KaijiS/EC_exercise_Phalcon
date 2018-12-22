@@ -13,10 +13,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
     public function showAction($id)
     {
         $this->view->disable(); 
-        // $this->response->setContentType('application/json'); 
-        // echo json_encode(["grape" => "perple"]);
 
-        // $item = Items::find($id);
         $item = Items::findFirst($id);
 
         if ($item->name == null) {
@@ -38,6 +35,13 @@ class ItemsController extends \Phalcon\Mvc\Controller
             ]
         ]);
         
+    }
+
+    public function serchAction()
+    {
+        $this->view->disable(); 
+
+        $items = Items::find("name = 'mechanical'");
     }
 
 }
