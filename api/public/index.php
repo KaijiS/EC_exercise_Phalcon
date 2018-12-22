@@ -25,6 +25,18 @@ try {
     include APP_PATH . '/config/services.php';
 
     /**
+     * Overriding Response-object to set the Content-type header globally
+     */
+    $di->setShared(
+        'response',
+        function () {
+            $response = new \Phalcon\Http\Response();
+            $response->setContentType('application/json', 'utf-8');
+            return $response;
+        }
+    );
+
+    /**
      * Get config service for use in inline setup below
      */
     $config = $di->getConfig();
