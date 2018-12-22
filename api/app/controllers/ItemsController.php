@@ -41,7 +41,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
     {
         $this->view->disable(); 
 
-        $items = Items::find('name LIKE %'.$name.'%');
+        $items = Items::find("name LIKE '%" . $name . "%'");
 
         $data = [];
 
