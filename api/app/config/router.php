@@ -12,6 +12,8 @@ $router = $di->getRouter();
 //     ]
 // );
 
-$router->add('/items/{id}', 'items::show');
+$router->addGet('/items/{id}', 'items::show');
+
+$router->addGet('/items/search/{name}', 'items::search');
 
 $router->handle();
