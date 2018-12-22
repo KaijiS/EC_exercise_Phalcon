@@ -110,3 +110,12 @@ $di->setShared('session', function () {
 
     return $session;
 });
+
+/**
+ * Overriding Response-object to set the Content-type header globally
+ */
+$di->setShared('response', function () {
+        $response = new \Phalcon\Http\Response();
+        $response->setContentType('application/json', 'utf-8');
+        return $response;
+});
