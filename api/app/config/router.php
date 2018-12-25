@@ -11,4 +11,6 @@ $router->addGet('/items/search/{name}', 'items::search');
 
 $router->addPost('/items/add', 'items::add');
 
+$router->addPost('/items/edit', 'items::edit');
+
 $router->handle();
