@@ -27,7 +27,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
             'raw_data'      => base64_encode($item->raw_data)
         );
 
-        return $this->responseJson($status_code = 200, $status = 'FOUND', $data = $data);
+        return $this->responseJson($status_code = 200, $status = 'FOUND', $options = array('data'=>$data));
     }
 
     public function searchAction($name)
@@ -51,7 +51,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
             ];
         }
 
-        return $this->responseJson($status_code = 200, $status = 'FOUND', $data = $data);
+        return $this->responseJson($status_code = 200, $status = 'FOUND', $options = array('data'=>$data));
     }
 
     public function addAction()
@@ -61,7 +61,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
         
         // リクエストパラメータの(json)の内容の確認
         if (! $this->checkJsonElements($request_item)){
-            return $this->responseJson($status_code = 400, $status = 'query parameter error', $error_message = 'The elements of json are bad');
+            return $this->responseJson($status_code = 415, $status = 'query parameter error', $options = array('message'=>'The elements of json are bad'));
         }
 
         $item = new Items();
@@ -80,7 +80,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
             try{
                 Checkimage::checkMimeType($mime);
             } catch (RuntimeException $e) {
-                return $this->responseJson($status_code = 415, $status = 'error', $error_message = $e->getMessage());
+                return $this->responseJson($status_code = 415, $status = 'error', $options = array('message'=>$e->getMessage()));
             }
         
             // 画像ファイルの情報を取得
@@ -99,10 +99,10 @@ class ItemsController extends \Phalcon\Mvc\Controller
             // foreach ($messages as $message) {
             //     echo $message, "\n";
             // }
-            return $this->responseJson($status_code = 500, $status = 'error', $error_message = 'can not be created');
+            return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be created'));
 
         } else {
-            return $this->responseJson($status_code = 200, $status = 'create', $name = $item->name);
+            return $this->responseJson($status_code = 200, $status = 'create', $options = array('name'=>$item->name));
         }
     }
 
@@ -114,7 +114,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
 
         // リクエストパラメータの(json)の内容の確認
         if (! $this->checkJsonElements($request_item)){
-            return $this->responseJson($status_code = 400, $status = 'query parameter error', $error_message = 'The elements of json are bad');
+            return $this->responseJson($status_code = 415, $status = 'query parameter error', $options = array('message'=>'The elements of json are bad'));
         }
 
         $item = Items::findFirst($id);
@@ -130,7 +130,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
             try{
                 Checkimage::checkMimeType($mime);
             } catch (RuntimeException $e) {
-                return $this->responseJson($status_code = 415, $status = 'error', $error_message = $e->getMessage());
+                return $this->responseJson($status_code = 415, $status = 'error', $options = array('message'=>$e->getMessage()));
             }
         
             // 画像ファイルの情報を取得
@@ -149,10 +149,10 @@ class ItemsController extends \Phalcon\Mvc\Controller
             // foreach ($messages as $message) {
             //     echo $message, "\n";
             // }
-            return $this->responseJson($status_code = 500, $status = 'error', $error_message = 'can not be edited');
+            return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be edited'));
 
         } else {
-            return $this->responseJson($status_code = 200, $status = 'update', $name = $item->name);
+            return $this->responseJson($status_code = 200, $status = 'update', $options = array('name'=>$item->name));
         }
     }
 
@@ -162,26 +162,28 @@ class ItemsController extends \Phalcon\Mvc\Controller
 
         $item = Items::findFirst($id);
 
-        if ($item !== false) {
-            if ($item->delete() === false) {
-                // echo "Sorry, we can't delete the robot right now: \n";
-        
-                // $messages = $robot->getMessages();
-        
-                // foreach ($messages as $message) {
-                //     echo $message, "\n";
-                return $this->responseJson($status_code = 500, $status = 'error', $error_message = 'can not be deleted');
+        if ($item->name == null) {
+            return $this->responseJson($status_code = 500, $status = 'NOT-FOUND', $options = array('message'=>'this id is nothig'));
+        }
 
-            } else {
-                return $this->responseJson($status_code = 200, $status = 'delete', $name = $item->name);
-            }
+        if ($item->delete() === false) {
+            // echo "Sorry, we can't delete the robot right now: \n";
+    
+            // $messages = $robot->getMessages();
+    
+            // foreach ($messages as $message) {
+            //     echo $message, "\n";
+            return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be deleted'));
+
+        } else {
+            return $this->responseJson($status_code = 200, $status = 'delete', $options = array('name'=>$item->name));
         }
     }
 
 
     public function route404Action()
     {
-        return $this->responseJson($status_code = 404, $status = 'NOT-FOUND', $error_message = 'Not found route');
+        return $this->responseJson($status_code = 404, $status = 'NOT-FOUND', array('message'=>'Not found route'));
     }
 
     private function checkJsonElements($request)
@@ -196,22 +198,30 @@ class ItemsController extends \Phalcon\Mvc\Controller
         }
     }
 
-    private function responseJson($status_code, $status, $data = null, $name = null, $error_message = null)
+    private function responseJson($status_code, $status, $options=null)
     {
+        $default = array(
+            'data' => null,
+            'name' => null,
+            'message' => null,
+        );
+        $args = array_merge($default, $options);
+
+
         if ($status_code == 200) {
-            if ($data==null and $name){
+            if ($args['data']==null and $args['name']){
                 return json_encode(array(
                     'status-code' => $status_code,
                     'status' => $status,
-                    'name' => $$name
+                    'name' => $args['name']
                 ));
-            } else if ($data and $name==null){
+            } else if ($args['data'] and $args['name']==null){
                 return json_encode(array(
                     'status-code' => $status_code,
                     'status' => $status,
-                    'data' => $data
+                    'data' => $args['data']
                 ));
-            } else if ($data==null and $name==null){
+            } else if ($args['data']==null and $args['name']==null){
                 return json_encode(array(
                     'status-code' => $status_code,
                     'status' => $status
@@ -221,7 +231,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
             return json_encode(array(
                 'status-code' => $status_code,
                 'status' => $status,
-                'message' => $error_message
+                'message' => $args['message']
             ));
         }
         
