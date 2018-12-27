@@ -94,12 +94,13 @@ class ItemsController extends \Phalcon\Mvc\Controller
         if ($item->save() === false) {
 
             $messages = $item->getMessages();
-            $errors = [];
-            foreach ($messages as $message) {
-                $errors[] = $message->getMessage();
+            if(count($messages) > 0){
+                $errors = [];
+                foreach ($messages as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                return $this->responseJson($status_code = 400, $status = 'error', $options = array('message'=>$errors));
             }
-            return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>$errors));
-
             return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be created'));
 
         } else {
@@ -143,13 +144,15 @@ class ItemsController extends \Phalcon\Mvc\Controller
         }
 
         if ($item->save() === false) {
-            // echo "Umh, We can't store robots right now: \n";
+            $messages = $item->getMessages();
+            if(count($messages) > 0){
+                $errors = [];
+                foreach ($messages as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                return $this->responseJson($status_code = 400, $status = 'error', $options = array('message'=>$errors));
+            }
 
-            // $messages = $robot->getMessages();
-
-            // foreach ($messages as $message) {
-            //     echo $message, "\n";
-            // }
             return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be edited'));
 
         } else {
@@ -168,12 +171,6 @@ class ItemsController extends \Phalcon\Mvc\Controller
         }
 
         if ($item->delete() === false) {
-            // echo "Sorry, we can't delete the robot right now: \n";
-    
-            // $messages = $robot->getMessages();
-    
-            // foreach ($messages as $message) {
-            //     echo $message, "\n";
             return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be deleted'));
 
         } else {
