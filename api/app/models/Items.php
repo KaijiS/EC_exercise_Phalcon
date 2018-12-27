@@ -85,11 +85,17 @@ class Items extends \Phalcon\Mvc\Model
     }
 
 
+
+    /**
+     * 
+     * バリデーションの設定
+     */
     public function validation()
     {
 
         $validator = new Validation();
 
+        // 同じ商品名は登録できない
         // $validator->add(
         //     'name',
         //     new Uniqueness(
@@ -100,6 +106,7 @@ class Items extends \Phalcon\Mvc\Model
         // );
 
         
+        // 商品名と説明文の文字数をバリデーション
         $validator->add(
             [
                 "name",
