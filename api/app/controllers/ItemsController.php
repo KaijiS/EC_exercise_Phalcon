@@ -61,7 +61,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
         
         // リクエストパラメータの(json)の内容の確認
         if (! $this->checkJsonElements($request_item)){
-            return $this->responseJson($status_code = 415, $status = 'query parameter error', $options = array('message'=>'The elements of json are bad'));
+            return $this->responseJson($status_code = 400, $status = 'query parameter error', $options = array('message'=>'The elements of json are bad'));
         }
 
         $item = new Items();
@@ -92,13 +92,14 @@ class ItemsController extends \Phalcon\Mvc\Controller
         }
 
         if ($item->save() === false) {
-            // echo "Umh, We can't store robots right now: \n";
 
-            // $messages = $robot->getMessages();
+            $messages = $item->getMessages();
+            $errors = [];
+            foreach ($messages as $message) {
+                $errors[] = $message->getMessage();
+            }
+            return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>$errors));
 
-            // foreach ($messages as $message) {
-            //     echo $message, "\n";
-            // }
             return $this->responseJson($status_code = 500, $status = 'error', $options = array('message'=>'can not be created'));
 
         } else {
@@ -114,7 +115,7 @@ class ItemsController extends \Phalcon\Mvc\Controller
 
         // リクエストパラメータの(json)の内容の確認
         if (! $this->checkJsonElements($request_item)){
-            return $this->responseJson($status_code = 415, $status = 'query parameter error', $options = array('message'=>'The elements of json are bad'));
+            return $this->responseJson($status_code = 400, $status = 'query parameter error', $options = array('message'=>'The elements of json are bad'));
         }
 
         $item = Items::findFirst($id);
