@@ -6,14 +6,17 @@
 defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
+require_once APP_PATH . '/config/dsn.php';
+// require_once APP_PATH . '/config/dsn_sample.php';
+
 return new \Phalcon\Config([
     'database' => [
-        'adapter'     => 'Mysql',
-        'host'        => 'localhost',
-        'username'    => 'root',
-        'password'    => 'root',
-        'dbname'      => 'EC',
-        'charset'     => 'utf8',
+        'adapter'     => $dsn['adapter'],
+        'host'        => $dsn['host'],
+        'username'    => $dsn['username'],
+        'password'    => $dsn['password'],
+        'dbname'      => $dsn['dbname'],
+        'charset'     => $dsn['charset'],
     ],
     'application' => [
         'appDir'         => APP_PATH . '/',
