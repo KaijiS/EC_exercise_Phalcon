@@ -1,0 +1,3 @@
+app/config/dsn.php
+cache/
+*.DS_Store
