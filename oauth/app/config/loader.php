@@ -9,5 +9,15 @@ $loader->registerDirs(
     [
         $config->application->controllersDir,
         $config->application->modelsDir,
+        $config->application->libraryDir
     ]
 )->register();
+
+// Register some namespaces
+// $loader->registerNamespaces(
+//     [
+//        "Example\Base"    => "vendor/example/base/",
+//        "Example\Adapter" => "vendor/example/adapter/",
+//        "Example"         => "vendor/example/",
+//     ]
+// )->register();

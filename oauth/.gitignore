@@ -1,2 +1,5 @@
 app/config/dsn.php
 app/config/github_app_keys.php
+cache/
+vendor/
+*.DS_Store
