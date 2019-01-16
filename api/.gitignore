@@ -1,3 +1,4 @@
 app/config/dsn.php
 cache/
+vendor
 *.DS_Store
