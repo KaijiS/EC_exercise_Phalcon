@@ -5,7 +5,7 @@ $router = $di->getRouter(false);
 
 // ルートの定義
 
-// ログイン前の画面のルート
+// ユーザー情報と商品一覧を表示する画面のルート
 $router->add('/session', 'session::index');
 
 // ログインするためのOAuth認証画面へ飛ばすためのルート
@@ -15,7 +15,7 @@ $router->add('/session/login', 'session::login');
 $router->add('/session/callback', 'session::callback');
 
 // ログイン後のユーザ情報を表示するルート
-$router->add('/session/show', 'session::show');
+$router->add('/session/show/{id:[0-9]+}', 'session::show');
 
 // ログアウトのためのルート
 $router->add('/session/logout', 'session::logout');

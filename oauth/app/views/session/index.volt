@@ -57,45 +57,45 @@
 
 <body>
 
-        <div>
-            <br>
-        </div>
-    
-    
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-4" style="word-wrap:break-word;">
-                    {% if jwt %}
-                        {{ image(user['avatar_url'], "alt": "user_avatar", "class":"user-avatar") }}<br>
-                        {{ user['login'] }}<br>
-                        {{ user['bio'] }}<br><br>
-                        jwt : <br>
-                        {{ jwt }}<br>
-                    {% else %}
-                        Guest
-                    {% endif %}
-                </div>
-                <div class="col-8 bg-light">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>商品名</th>
-                                <th>説明</th>
-                                <th>価格</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in data %}
-                            <tr>
-                                <th>{{ item['name'] }}</th>
-                                <td>{{ item['description'] }}</td>
-                                <td>{{ item['price' ]}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <div>
+        <br>
+    </div>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4" style="word-wrap:break-word;">
+                {% if jwt %}
+                    {{ image(user['avatar_url'], "alt": "user_avatar", "class":"user-avatar") }}<br>
+                    {{ user['login'] }}<br>
+                    {{ user['bio'] }}<br><br>
+                    jwt : <br>
+                    {{ jwt }}<br>
+                {% else %}
+                    Guest
+                {% endif %}
+            </div>
+            <div class="col-8 bg-light">
+                <table class="table table-hover table-clickable">
+                    <thead>
+                        <tr>
+                            <th>商品名</th>
+                            <th>説明</th>
+                            <th>価格</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in data %}
+                        <tr>
+                            <th>{{ linkTo(["session/show/"~item['id'], item['name'], "local":true, "class":"nav-link", "title":"show"]) }}</th>
+                            <td>{{ item['description'] }}</td>
+                            <td>{{ item['price' ]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-    
-    </body>
+    </div>
+
+</body>

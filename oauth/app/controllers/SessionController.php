@@ -1,7 +1,7 @@
 <?php
 
 defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
-defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
+defined('APP_PATH')  || define('APP_PATH', BASE_PATH . '/app');
 
 class SessionController extends ControllerBase
 {
@@ -22,7 +22,7 @@ class SessionController extends ControllerBase
 
 
     /**
-     * ログイン前の画面について
+     * ユーザ情報と商品一覧を表示
      */
     public function indexAction()
     {
@@ -145,38 +145,63 @@ class SessionController extends ControllerBase
 
 
     /**
-     * ユーザ情報を掲示する画面
-     * アクセストークンを使用して情報を取得し掲示する処理
+     * 商品の詳細情報を閲覧
      */
-    public function showAction()
+    public function showAction($id)
     {
-        $provider = $this->getGithubProvider();
-
         // セッションを利用してアクセストークン確認
-        if(empty($this->session->get('AccessToken'))){
-            // セッションにアクセストークンがなければエラー画面へ遷移
-            return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'session_error'));
+        if($this->session->get('AccessToken') and $this->session->get('JWT')){
+            // トークン使って認可したユーザ情報を取得する
+            $provider = $this->getGithubProvider();
+            $user     = $provider->getResourceOwner($this->session->get('AccessToken'));
+            $user     = $user->toArray();
         }
-        // セッションを利用してJWT確認
-        if(empty($this->session->get('JWT'))){
-            // セッションにJWTがなければエラー画面へ遷移
-            return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'get_jwt_error'));
-        }
-
-        // トークン使って認可したユーザ情報を取得する
-        $user = $provider->getResourceOwner($this->session->get('AccessToken'));
-        $user = $user->toArray();
 
         // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信
         $base_url = 'http://localhost/EC_exercise_Phalcon/';
-        $response = file_get_contents($base_url.'api/items/', false, $context);
+        $response = file_get_contents($base_url.'api/items/'.$id, false, $context);
         $response = json_decode($response, true);
 
         // ユーザ情報を画面へレンダリング
         $this->view->setVar("user", $user);
         $this->view->setVar("jwt",  $this->session->get('JWT'));
-        $this->view->setVar("data",  $response['data']);
+        $this->view->setVar("item", $response['data']);
     }
+
+
+    /**
+     * ユーザ情報を掲示する画面
+     * アクセストークンを使用して情報を取得し掲示する処理
+     */
+    // public function showAction()
+    // {
+    //     $provider = $this->getGithubProvider();
+
+    //     // セッションを利用してアクセストークン確認
+    //     if(empty($this->session->get('AccessToken'))){
+    //         // セッションにアクセストークンがなければエラー画面へ遷移
+    //         return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'session_error'));
+    //     }
+    //     // セッションを利用してJWT確認
+    //     if(empty($this->session->get('JWT'))){
+    //         // セッションにJWTがなければエラー画面へ遷移
+    //         return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'get_jwt_error'));
+    //     }
+
+    //     // トークン使って認可したユーザ情報を取得する
+    //     $user = $provider->getResourceOwner($this->session->get('AccessToken'));
+    //     $user = $user->toArray();
+
+    //     // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信
+    //     $base_url = 'http://localhost/EC_exercise_Phalcon/';
+    //     $response = file_get_contents($base_url.'api/items/', false, $context);
+    //     $response = json_decode($response, true);
+
+    //     // ユーザ情報を画面へレンダリング
+    //     $this->view->setVar("user", $user);
+    //     $this->view->setVar("jwt",  $this->session->get('JWT'));
+    //     $this->view->setVar("data",  $response['data']);
+    // }
 
 
 

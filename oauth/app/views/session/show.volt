@@ -39,24 +39,12 @@
 
             </div>
             <div class="col-8 bg-light">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>商品名</th>
-                            <th>説明</th>
-                            <th>価格</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in data %}
-                        <tr>
-                            <th>{{ item['name'] }}</th>
-                            <td>{{ item['description'] }}</td>
-                            <td>{{item['price']}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <h3>{{ item['name'] }}</h3>
+                <h4>価格 : {{ item['price'] }} 円</h4><br>
+                {{ item['description'] }}<br><br>
+                {% if item['mime'] and item['raw_data']%}
+                    {{ image("data:"~item['mime']~";base64,"~item['raw_data'], "alt": "item_img", "class":"item_img") }}<br>
+                {% endif %}
             </div>
         </div>
     </div>
