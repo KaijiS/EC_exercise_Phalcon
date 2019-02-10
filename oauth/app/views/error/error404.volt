@@ -12,6 +12,7 @@
     {% if session_access_token %}
         {{ linkTo(["session", "TOPへ", "local":true, "class":"btn btn-lg", "title":"error2top"]) }}
     {% else %}
-        {{ linkTo(["session/show", "TOPへ", "local":true, "class":"btn btn-lg", "title":"error2show"]) }}
+        <!-- {{ linkTo(["session/show", "TOPへ", "local":true, "class":"btn btn-lg", "title":"error2show"]) }} -->
+        {{ linkTo(["session/", "TOPへ", "local":true, "class":"btn btn-lg", "title":"error2index"]) }}
     {% endif %}
 </div>

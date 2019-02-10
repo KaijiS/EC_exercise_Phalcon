@@ -18,8 +18,8 @@
             </div>
         </nav>
     </div>
-    <h1>Session Error</h1>
-    <h3>ログインされていません</h3>
+    <h1>Session of JWT Error</h1>
+    <h3>ログインをやりなおして下さい</h3>
     <br>
 
     {{ linkTo(["session", "TOPへ", "local":true, "class":"btn btn-lg", "title":"error2top"]) }}

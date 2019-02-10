@@ -4,10 +4,51 @@
 class ItemsController extends ControllerBase
 {
 
-    // public function indexAction()
-    // {
+    /**
+     * 商品情報一覧を，jsonで返す
+     *
+     * @param
+     * @return json {status-code:int, status:steing, data:array, message:array:string}
+     */
+    public function indexAction()
+    {
+        // APIなので画面に表示させない
+        $this->view->disable(); 
 
-    // }
+        // 指定したIDの商品情報を取得
+        $items = Items::find();
+
+        // 指定したIDがデータベースに存在しなければ，その旨をjsonで返す
+        if (count($items)==0) {
+            $this->response->setStatusCode(200);
+            return json_encode(array(
+                'status-code' => 200,
+                'status'      => 'NOT-FOUND',
+                'data'        => NULL,
+                'message'     => NULL
+            ));
+        }
+
+        $data = [];
+
+        // Traversing with a foreach
+        foreach ($items as $item) {
+            // 情報があればjsonに埋め込んで返す
+            $data[] = array(
+                'id'            => $item->id,
+                'name'          => $item->name,
+                'description'   => $item->description,
+                'price'         => $item->price,
+            );
+        }
+        $this->response->setStatusCode(200);
+        return json_encode(array(
+            'status-code' => 200,
+            'status'      => 'FOUND',
+            'data'        => $data,
+            'message'     => NULL
+        ));
+    }
 
 
     /**
@@ -36,7 +77,6 @@ class ItemsController extends ControllerBase
         }
 
         // 情報があればjsonに埋め込んで返す
-        $this->response->setStatusCode(200);
         $data = array(
             'id'            => $item->id,
             'name'          => $item->name,
@@ -45,6 +85,7 @@ class ItemsController extends ControllerBase
             'mime'          => $item->mime,
             'raw_data'      => base64_encode($item->raw_data)
         );
+        $this->response->setStatusCode(200);
         return json_encode(array(
             'status-code' => 200,
             'status'      => 'FOUND',

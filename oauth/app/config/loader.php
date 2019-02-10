@@ -9,15 +9,14 @@ $loader->registerDirs(
     [
         $config->application->controllersDir,
         $config->application->modelsDir,
-        $config->application->libraryDir
     ]
-)->register();
+);
 
-// Register some namespaces
-// $loader->registerNamespaces(
-//     [
-//        "Example\Base"    => "vendor/example/base/",
-//        "Example\Adapter" => "vendor/example/adapter/",
-//        "Example"         => "vendor/example/",
-//     ]
-// )->register();
+// Load composer vendor stuff
+$loader->registerFiles(
+    [
+        APP_PATH . "/library/oauth2/vendor/autoload.php"
+    ]
+);
+
+$loader->register();

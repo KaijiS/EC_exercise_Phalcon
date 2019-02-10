@@ -6,6 +6,9 @@ $router = $di->getRouter(false);
 
 // ルートの定義
 
+// 商品情報一覧を取得するルート
+$router->addGet('/items', 'items::index');
+
 // idで商品情報を取得するルート
 $router->addGet('/items/{id:\d+}', 'items::show');
 
