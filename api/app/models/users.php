@@ -29,6 +29,12 @@ class Users extends \Phalcon\Mvc\Model
      *
      * @var string
      */
+    public $oauth_id;
+
+    /**
+     *
+     * @var string
+     */
     public $access_token;
 
     /**
@@ -87,13 +93,13 @@ class Users extends \Phalcon\Mvc\Model
         $validator->add(
             [
                 'name',
-                'access_token'
+                // 'access_token'
             ],
             new Uniqueness(
                 [
                     "message" => [
                         "name"  => 'The user name must be unique',
-                        "access_token" => 'The AccessToken must be unique',
+                        // "access_token" => 'The AccessToken must be unique',
                     ]
                 ]
             )

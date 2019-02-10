@@ -21,8 +21,9 @@ $router->addPut('/items/{id:\d+}', 'items::edit');
 // 商品情報を削除するルート
 $router->addDelete('/items/{id:\d+}', 'items::delete');
 
+
 // jwtを発行するルート
-$router->addPost('/jwt', 'jwt::index');
+$router->addPost('/users/jwt', 'users::getJWT');
 
 // 以上のルートのどこにも当てはまらない時
 $router->notFound('items::route404');

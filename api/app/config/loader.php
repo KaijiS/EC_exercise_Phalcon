@@ -1,5 +1,6 @@
 <?php
 
+
 $loader = new \Phalcon\Loader();
 
 /**
@@ -11,4 +12,13 @@ $loader->registerDirs(
         $config->application->modelsDir,
         $config->application->libraryDir
     ]
-)->register();
+);
+
+// Load composer vendor stuff
+$loader->registerFiles(
+    [
+        APP_PATH . "/library/php_jwt/vendor/autoload.php"
+    ]
+);
+
+$loader->register();
