@@ -143,7 +143,7 @@ class ItemsController extends ControllerBase
      * 商品情報を追加する
      *
      * @param
-     * @return json {status-code:int, status:steing, data:array, message:string}
+     * @return json {status-code:int, status:steing, data:array, message:array:string}
      */
     public function addAction()
     {
@@ -248,7 +248,6 @@ class ItemsController extends ControllerBase
                 'status'      => 'create',
                 'data'        => array('name'=>$item->name),
                 'message'     => NULL,
-                'aaa' => json_decode($checkout),
             ));
         }
     }
@@ -415,7 +414,7 @@ class ItemsController extends ControllerBase
             return json_encode(array(
                 'status-code' => 200,
                 'status'      => 'delete',
-                'data'        => array('name'=>$item->name),
+                'data'        => NULL,
                 'message'     => NULL
             ));
         }

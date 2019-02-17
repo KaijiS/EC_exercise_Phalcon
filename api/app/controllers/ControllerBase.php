@@ -38,7 +38,7 @@ class ControllerBase extends \Phalcon\Mvc\Controller
                 'status-code' => 403,
                 'status'      => 'Forbidden',
                 'data'        => NULL,
-                'message'     => NULL
+                'message'     => array('Auth is not included in the header')
             ));
         }
 
@@ -56,7 +56,7 @@ class ControllerBase extends \Phalcon\Mvc\Controller
                 'status-code' => 405,
                 'status'      => 'error',
                 'data'        => NULL,
-                'message'     => $e->getMessage()
+                'message'     => array($e->getMessage())
             ));
         }
 

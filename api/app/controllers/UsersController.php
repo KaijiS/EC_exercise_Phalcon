@@ -51,7 +51,7 @@ class UsersController extends ControllerBase
             $tokenId    = base64_encode(random_bytes(32));
             $issuedAt   = time();                   // 発行時刻：トークンが生成された時刻
             $notBefore  = $issuedAt + 1;             //Adding 1 seconds
-            $expire     = $notBefore + 600;            // Adding 10 seconds トークンの有効期間
+            $expire     = $notBefore + 3600;            // Adding 3600 seconds トークンの有効期間
             $serverName = $this->config->serverName; // 発行者
             $data = [
                 'iat'  => $issuedAt,         // 発行時刻：トークンが生成された時刻

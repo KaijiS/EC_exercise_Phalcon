@@ -13,7 +13,7 @@ $router->addGet('/items', 'items::index');
 $router->addGet('/items/{id:\d+}', 'items::show');
 
 // 商品情報を検索するルート
-$router->addGet('/items/search/{name}', 'items::search');
+$router->addGet('/items/search/{key}', 'items::search');
 
 // 商品情報を追加するルート
 $router->addPost('/items', 'items::add');

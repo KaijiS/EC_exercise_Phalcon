@@ -34,14 +34,14 @@ class SessionController extends ControllerBase
             $user     = $user->toArray();
         }
 
-        // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信
-        $base_url = 'http://localhost/EC_exercise_Phalcon/';
-        $response = file_get_contents($base_url.'api/items/', false, $context);
+        // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信する。すると商品一覧情報を得る
+        $response = file_get_contents($this->getBaseURL_ofAPI().'api/items/', false, $context);
         $response = json_decode($response, true);
 
         // ユーザ情報を画面へレンダリング
         $this->view->setVar("user", $user);
         $this->view->setVar("jwt",  $this->session->get('JWT'));
+        // 商品一覧情報をレンダリング
         $this->view->setVar("data", $response['data']);
 
     }
@@ -72,6 +72,7 @@ class SessionController extends ControllerBase
      */
     public function callbackAction()
     {
+        // GitHubのOAuth認証から情報を得る
         $provider = $this->getGithubProvider();
 
         // ちゃんと session/login からきたかどうかセッションを確認
@@ -96,7 +97,6 @@ class SessionController extends ControllerBase
         }
 
         // アクセストークンを使用して情報を取得し掲示する処理へリダイレクト
-        // $this->response->redirect("session/show");
         $this->response->redirect("session/");
     }
 
@@ -106,12 +106,14 @@ class SessionController extends ControllerBase
      */
     private function getJWTofItemAPI()
     {
+        // GitHubのOAuth認証から情報を得る
         $provider = $this->getGithubProvider();
 
         // トークン使って認可したユーザ情報を取得する
         $user = $provider->getResourceOwner($this->session->get('AccessToken'));
         $user = $user->toArray();
 
+        // JWTに含むユーザ情報を構成
         $context = stream_context_create(
             array(
                 'http' => array(
@@ -127,8 +129,8 @@ class SessionController extends ControllerBase
             )
         );
         
-        $base_url = 'http://localhost/EC_exercise_Phalcon/';
-        $jwt_response = file_get_contents($base_url.'api/users/jwt', false, $context);
+        // APIのレスポンスからJWTを取得
+        $jwt_response = file_get_contents($this->getBaseURL_ofAPI().'api/users/jwt', false, $context);
         $jwt_response = json_decode($jwt_response, true);
 
         if ($jwt_response['status-code'] == 200){
@@ -157,57 +159,54 @@ class SessionController extends ControllerBase
             $user     = $user->toArray();
         }
 
-        // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信
-        $base_url = 'http://localhost/EC_exercise_Phalcon/';
-        $response = file_get_contents($base_url.'api/items/'.$id, false, $context);
+        // APIへリクエスト送信し、商品の詳細情報をレスポンスとして受ける
+        $response = file_get_contents($this->getBaseURL_ofAPI().'api/items/'.$id, false, $context);
         $response = json_decode($response, true);
 
         // ユーザ情報を画面へレンダリング
         $this->view->setVar("user", $user);
         $this->view->setVar("jwt",  $this->session->get('JWT'));
+        // 商品の詳細情報をレンダリング
         $this->view->setVar("item", $response['data']);
     }
 
 
+
+
     /**
-     * ユーザ情報を掲示する画面
-     * アクセストークンを使用して情報を取得し掲示する処理
+     * 商品の検索を実行して表示
      */
-    // public function showAction()
-    // {
-    //     $provider = $this->getGithubProvider();
+    public function searchAction()
+    {
+        // セッションを利用してアクセストークン確認
+        if($this->session->get('AccessToken') and $this->session->get('JWT')){
+            // トークン使って認可したユーザ情報を取得する
+            $provider = $this->getGithubProvider();
+            $user     = $provider->getResourceOwner($this->session->get('AccessToken'));
+            $user     = $user->toArray();
+        }
 
-    //     // セッションを利用してアクセストークン確認
-    //     if(empty($this->session->get('AccessToken'))){
-    //         // セッションにアクセストークンがなければエラー画面へ遷移
-    //         return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'session_error'));
-    //     }
-    //     // セッションを利用してJWT確認
-    //     if(empty($this->session->get('JWT'))){
-    //         // セッションにJWTがなければエラー画面へ遷移
-    //         return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'get_jwt_error'));
-    //     }
+        // 検索ワードを取得
+        $key = $this->request->getQuery("key");
 
-    //     // トークン使って認可したユーザ情報を取得する
-    //     $user = $provider->getResourceOwner($this->session->get('AccessToken'));
-    //     $user = $user->toArray();
+        // APIへリクエスト送信し、検索した結果(商品情報)のレスポンスを受ける
+        $response = file_get_contents($this->getBaseURL_ofAPI().'api/items/search/'.$key, false, $context);
+        $response = json_decode($response, true);
 
-    //     // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信
-    //     $base_url = 'http://localhost/EC_exercise_Phalcon/';
-    //     $response = file_get_contents($base_url.'api/items/', false, $context);
-    //     $response = json_decode($response, true);
+        // ユーザ情報を画面へレンダリング
+        $this->view->setVar("user", $user);
+        $this->view->setVar("jwt",  $this->session->get('JWT'));
+        // 検索ワードと、検索にヒットした商品情報をレンダリング
+        $this->view->setVar("key", $key);
+        $this->view->setVar("data", $response['data']);
+    }
 
-    //     // ユーザ情報を画面へレンダリング
-    //     $this->view->setVar("user", $user);
-    //     $this->view->setVar("jwt",  $this->session->get('JWT'));
-    //     $this->view->setVar("data",  $response['data']);
-    // }
 
 
 
     /**
      * 
-     * 商品情報を追加するためのform
+     * 商品情報を追加(ログインユーザのみ)
      */
     public function addAction()
     {
@@ -223,42 +222,241 @@ class SessionController extends ControllerBase
             return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'get_jwt_error'));
         }
 
-        // 商品情報をformから取得
-        // JWTをリクエストのヘッダーに付加し、APIへリクエスト送信
-        $insert_data = array(
-            'name'        => 'kkkkk',
-            'description' => 'heiseijidai',
-            'price'       => 2000,
-            'img'         => null
-        );
+    
+        // トークン使って認可したユーザ情報を取得する
+        $provider = $this->getGithubProvider();
+        $user     = $provider->getResourceOwner($this->session->get('AccessToken'));
+        $user     = $user->toArray();
 
+
+        if( ! $this->request->isPost())
+        {
+            // index画面から"商品を追加"ボタンを押した時
+
+            // ユーザ情報を画面へレンダリング
+            $this->view->setVar("user", $user);
+            $this->view->setVar("jwt",  $this->session->get('JWT'));
+
+
+        }else{
+            // 追加ボタンを押した時
+
+            // 商品情報をformから取得しJson(APIへリクエストするための)の要素とする
+            $insert_data = array(
+                'name'        => $this->request->getPost('name'),
+                'description' => $this->request->getPost('description'),
+                'price'       => $this->request->getPost('price'),
+            );
+
+            // アップロード画像があれば，Jsonの要素へと追加する
+            if($this->request->hasFiles(true)){
+                // Phalconは複数のファイルアップロードを想定しているので配列になっている -> ループ回して取り出す
+                foreach ($this->request->getUploadedFiles() as $file) {
+                    $raw_data = file_get_contents($file->getTempName()); // バイナリ取得
+                    $insert_data['img'] = base64_encode($raw_data);      // base64へエンコード
+                }
+
+            }
+
+                
+            // APIへPOSTするためのコンテンツ作り
+            $context = stream_context_create(
+                array(
+                    'http' => array(
+                        'method'=> 'POST',
+                        'header'=>
+                            [
+                                'Authorization: Bearer '.$this->session->get('JWT'),
+                                'Content-type: application/json; charset=UTF-8',
+                            ],
+                        'content' => json_encode(
+                            $insert_data
+                        )
+                    )
+                )
+            );
+            
+            // API叩く
+            $response = file_get_contents($this->getBaseURL_ofAPI().'api/items/', false, $context);
+            $response = json_decode($response, true);
+
+
+            // responseの情報を元にレンダリングやリダイレクト
+            if ($response["status-code"]!=201){
+                // バリデーションエラー他のときメッセージなどを含めてレンダリングし直す
+
+                // ユーザ情報を画面へレンダリング
+                $this->view->setVar("user", $user);
+                $this->view->setVar("jwt",  $this->session->get('JWT'));
+                // バリデーションやその他エラーを表示
+                $this->view->setVar("error_message", $response['message']);
+
+            } else{
+                // 情報一覧を掲示する処理へリダイレクト
+                $this->response->redirect("session/");
+            }
+
+
+        }
+
+    }
+
+
+
+
+    /**
+     * 
+     * 商品情報の編集(ログインユーザのみ)
+     */
+    public function editAction($id)
+    {
+
+        // セッションを利用してアクセストークン確認
+        if(empty($this->session->get('AccessToken'))){
+            // セッションにアクセストークンがなければエラー画面へ遷移
+            return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'session_error'));
+        }
+        // セッションを利用してJWT確認
+        if(empty($this->session->get('JWT'))){
+            // セッションにJWTがなければエラー画面へ遷移
+            return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'get_jwt_error'));
+        }
+
+    
+        // トークン使って認可したユーザ情報を取得する
+        $provider = $this->getGithubProvider();
+        $user     = $provider->getResourceOwner($this->session->get('AccessToken'));
+        $user     = $user->toArray();
+
+
+        if( ! $this->request->isPost())
+        {
+            // 商品詳細画面から"編集"ボタンを押した時
+
+            // ユーザ情報を画面へレンダリング
+            $this->view->setVar("user", $user);
+            $this->view->setVar("jwt",  $this->session->get('JWT'));
+
+            // 現在の商品情報をAPI経由で取得しレンダリング
+            $response = file_get_contents($this->getBaseURL_ofAPI().'api/items/'.$id, false, $context);
+            $response = json_decode($response, true);
+            $this->view->setVar("item_info", $response['data']);
+
+
+
+        }else{
+            // 編集画面で"編集"ボタンを押した時
+
+            // 商品情報をformから取得しJson(APIへリクエストするための)の要素とする
+            $insert_data = array(
+                'name'        => $this->request->getPost('name'),
+                'description' => $this->request->getPost('description'),
+                'price'       => $this->request->getPost('price'),
+            );
+
+            // アップロード画像があれば，Jsonの要素へと追加する
+            if($this->request->hasFiles(true)){
+                // Phalconは複数のファイルアップロードを想定しているので配列になっている -> ループ回して取り出す
+                foreach ($this->request->getUploadedFiles() as $file) {
+                    $raw_data = file_get_contents($file->getTempName()); // バイナリ取得
+                    $insert_data['img'] = base64_encode($raw_data);      // base64へエンコード
+                }
+
+            }
+
+                
+            // APIへPUTするためのコンテンツ作り
+            $context = stream_context_create(
+                array(
+                    'http' => array(
+                        'method'=> 'PUT',
+                        'header'=>
+                            [
+                                'Authorization: Bearer '.$this->session->get('JWT'),
+                                'Content-type: application/json; charset=UTF-8',
+                            ],
+                        'content' => json_encode(
+                            $insert_data
+                        )
+                    )
+                )
+            );
+            
+            // API叩く
+            $response = file_get_contents($this->getBaseURL_ofAPI().'api/items/'.$id, false, $context);
+            $response = json_decode($response, true);
+
+
+            // responseの情報を元にレンダリングやリダイレクト
+            if ($response["status-code"]!=200){
+                // バリデーションエラー他のときメッセージなどを含めてレンダリングし直す
+
+                // ユーザ情報を画面へレンダリング
+                $this->view->setVar("user", $user);
+                $this->view->setVar("jwt",  $this->session->get('JWT'));
+                // バリデーションやその他エラーを表示
+                $this->view->setVar("error_message", $response['message']);
+
+            } else{
+                // 情報一覧を掲示する処理へリダイレクト
+                $this->response->redirect("session/");
+            }
+
+
+        }
+
+    }
+
+
+
+
+    /**
+     * 
+     * 商品情報を削除(ログインユーザのみ)
+     */
+    public function deleteAction($id)
+    {
+
+        // セッションを利用してアクセストークン確認
+        if(empty($this->session->get('AccessToken'))){
+            // セッションにアクセストークンがなければエラー画面へ遷移
+            return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'session_error'));
+        }
+        // セッションを利用してJWT確認
+        if(empty($this->session->get('JWT'))){
+            // セッションにJWTがなければエラー画面へ遷移
+            return $this->dispatcher->forward(array('controller' => 'error', 'action' => 'get_jwt_error'));
+        }
+
+
+        // トークン使って認可したユーザ情報を取得する
+        $provider = $this->getGithubProvider();
+        $user     = $provider->getResourceOwner($this->session->get('AccessToken'));
+        $user     = $user->toArray();
+
+        // APIへDELETEするためのコンテンツ作り
         $context = stream_context_create(
             array(
                 'http' => array(
-                    'method'=> 'POST',
+                    'method'=> 'DELETE',
                     'header'=>
-                        [
-                            'Authorization: Bearer '.$this->session->get('JWT'),
-                            'Content-type: application/json; charset=UTF-8',
-                        ],
-                    'content' => json_encode(
-                        $insert_data
-                    )
+                            [
+                                'Authorization: Bearer '.$this->session->get('JWT'),
+                                'Content-type: application/json; charset=UTF-8',
+                            ],
                 )
             )
         );
         
-        $base_url = 'http://localhost/EC_exercise_Phalcon/';
-        $response = file_get_contents($base_url.'api/items/', false, $context);
+        // API叩く
+        $response = file_get_contents($this->getBaseURL_ofAPI().'/api/items/'.strval($id) , false, $context);
         $response = json_decode($response, true);
 
-
-        if ($response["status-code"]!=200){
-            // エラー画面へ推移
-        }
-
-        // 情報一覧を掲示する処理へリダイレクト
-        $this->response->redirect("session/show");
+        // ユーザ情報を画面へレンダリング
+        $this->view->setVar("user", $user);
+        $this->view->setVar("jwt",  $this->session->get('JWT'));
+        // response情報を元にレンダリング
+        $this->view->setVar("response", $response);
 
 
     }
