@@ -115,8 +115,8 @@ class Items extends \Phalcon\Mvc\Model
             new StringLengthValidator(
                 [
                     "max" => [
-                        "name"  => 5,
-                        "description" => 5,
+                        "name"  => 100,
+                        "description" => 500,
                     ],
                     "min" => [
                         "name"  => 1,
@@ -124,7 +124,7 @@ class Items extends \Phalcon\Mvc\Model
                     ],
                     "messageMaximum" => [
                         "name"  => "Name is longer than 100 characters",
-                        "description" => "Description is longer than 100 characters",
+                        "description" => "Description is longer than 500 characters",
                     ],
                     "messageMinimum" => [
                         "name"  => "Name must be at least 1 character",

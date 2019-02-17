@@ -17,6 +17,14 @@ class ErrorController extends ControllerBase
     }
 
     /**
+     * jwtの取得に失敗した時、およびjwtがセッションにない時のエラー画面について
+     */
+    public function get_jwt_errorAction()
+    {
+
+    }
+
+    /**
      * 定義されていないルートへアクセスされた時のエラー画面について
      */
     public function error404Action()

@@ -91,25 +91,32 @@
                     </div><br>
                 {% endif %}
 
-                <!-- 商品情報一覧表示 -->
-                <table class="table table-hover bg-light">
-                    <thead>
-                        <tr>
-                            <th>商品名</th>
-                            <th>説明</th>
-                            <th>価格</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in data %}
-                        <tr>
-                            <th>{{ linkTo(["session/show/"~item['id'], item['name'], "local":true, "class":"btn btn-default", "title":"show"]) }}</th>
-                            <td>{{ item['description'] }}</td>
-                            <td>{{ item['price' ]}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <!-- 検索結果表示 -->
+                {% if data|length == 0 %}
+                    <b>"{{ key }}"</b>を含む商品名はありませんでした。
+
+                {% else %}
+                    "<b>{{ key }}</b>"の検索結果  <b>{{ data|length }}</b>件
+                    <table class="table table-hover bg-light">
+                        <thead>
+                            <tr>
+                                <th>商品名</th>
+                                <th>説明</th>
+                                <th>価格</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in data %}
+                            <tr>
+                                <td>{{ linkTo(["session/show/"~item['id'], item['name'], "local":true, "class":"btn btn-default", "title":"show"]) }}</td>
+                                <td>{{ item['description'] }}</td>
+                                <td>{{ item['price' ]}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                {% endif %}
             </div>
         </div>
     </div>

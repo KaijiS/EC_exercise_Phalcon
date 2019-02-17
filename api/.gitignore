@@ -1,3 +1,5 @@
 app/config/dsn.php
+app/config/jwt_key.php
 cache/
+vendor
 *.DS_Store
